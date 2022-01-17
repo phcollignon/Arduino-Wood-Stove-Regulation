@@ -10,11 +10,7 @@ The combustion is always optimal and you get the maximum calories out of your fi
 
 You get a notification when a wood refill is needed.
 
-  <iframe width="560" height="315"
-src="https://www.youtube.com/embed/uNl3eiWf07A" 
-frameborder="0" 
-allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-allowfullscreen></iframe>
+[![Watch the video](documentation/youtube.png)](https://youtu.be/uNl3eiWf07A)
 
 
 
