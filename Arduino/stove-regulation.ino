@@ -83,7 +83,7 @@ float minDraft = 5.0;
 float zeroDraft = 0.0;
 
 String messageTmp;
-String messageDrw;
+String messageDrf;
 
 boolean closeBuzzer = true;
 boolean refillBuzzer = true;
@@ -112,21 +112,19 @@ void loop() {
 
     potentio =   (potentioMax - potentio) * 100 / potentioMax ;
 
-    if (reset==1 || potentio < potentionRelMax ) {
+    if ( reset==1 || potentio < potentionRelMax ) {
       // Potentiometre regulation
       draft = round(potentio * maxDraft / 100);
       errI = 0;
       errD = 0;
       closeBuzzer = true;
       refillBuzzer = true;
-      messageDrw = "Drw=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
+      messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
     }
     else
     { 
-      //  if(errI<closeTrigger && errP < 0 ){// Stop if end of combustion and temp decrease
-      if (errI < closeTrigger  ) {
-        // Serial.println(String(temperature)+";"+String(draft/maxDraft* 100)+";"+String(errP)+";"+String(errI)+";"+String(errD));
-        // PID regulation
+        if (errI < closeTrigger  ) {
+         // PID regulation
         errP = consigneTemperature - temperature;
         errI = errI + errP;
         errD = errP - errOld;
@@ -142,10 +140,10 @@ void loop() {
         if (temperature < temperatureMin) errI = 0;
         if (errI >= closeTrigger) draft = zeroDraft;
 
-        messageDrw = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
+        messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
         //Refill Alarm
         if (errI > refillTrigger) {
-          messageDrw = "Please refill !!" ;
+          messageDrf = "Please refill !!" ;
           if (refillBuzzer) {
             for (int i = 0; i < buzzerRefillRepeat; i++) {
               tone(buzzerPort, buzzerRefillFrequency);
@@ -166,7 +164,7 @@ void loop() {
 
       else {
         // Close Valve if end of combustion
-        messageDrw = "Fire End.  <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
+        messageDrf = "Fire End.  <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
 
         if (closeBuzzer) {
           for (int i = 0; i < buzzerCloseRepeat; i++) {
@@ -186,7 +184,7 @@ void loop() {
     messageTmp = "Tmp=" + String(temperature) + "C" + " Po=" +  round(potentio) + "%" ;
     lcd.print(messageTmp );
     lcd.setCursor(0, 1);
-    lcd.print(messageDrw);
+    lcd.print(messageDrf);
     // Serial Plotter
     // Serial.print(round(draft/maxDraft* 100));
     // Serial.print(" ");
