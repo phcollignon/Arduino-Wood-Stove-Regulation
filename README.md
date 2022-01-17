@@ -10,11 +10,13 @@ The combustion is always optimal and you get the maximum calories out of your fi
 
 You get a notification when a wood refill is needed.
 
-[![Watch the video](https://img.youtube.com/vi/uNl3eiWf07A/maxresdefault.jpg)](https://youtu.be/uNl3eiWf07A)
+  <iframe width="560" height="315"
+src="https://www.youtube.com/embed/uNl3eiWf07A" 
+frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=uNl3eiWf07A
-" target="_blank"><img src="http://img.youtube.com/vi/uNl3eiWf07A/0.jpg" 
-alt="Youtube Video" width="960" height="720" border="10" /></a>
+
 
 At the end of the fire, the system automatically close the air supply to prevent the stove to cool down to fast.
 
