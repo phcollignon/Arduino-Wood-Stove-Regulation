@@ -2,7 +2,7 @@
 // Firewood regulation
 // Author : Philippe Collignon (philippe.collignon@email.com)
 // CC Attribution Non-Commercial ShareAlike License.
-// WARNING : always let a minimum drawing.
+// WARNING : always let a minimum draft.
 // Not providing enough air supply to stove is dangerous.  It can produce fatal CO gaz or incomplete burned gaz explosion.
 // Disclaimer : I am not responsible of any use of this script. By using this script you take all responsability of its configuration and usage.
 
@@ -50,7 +50,7 @@ MAX6675 thermocouple(thermoSckkPort, thermoCsPort, thermoSoPort); //,units,error
 LiquidCrystal lcd(lcdPort1, lcdPort2, lcdPort3, lcdPort4, lcdPort5, lcdPort6);
 
 // Regulation variables (Base on PID :
-// drawing = kP* errP + kI * errI + kD * errD
+// draft = kP* errP + kI * errI + kD * errD
 // errP = consigneTemperature - temperature
 // errI = errP integral
 // errD = errP derivative
@@ -76,11 +76,11 @@ int potentionRelMax = 80;      // Potentiometre value above which the regulator 
 int reset = 0;
 
 int angle = 0;
-int drawing = 0;
-int oldDrawing = 0;
-float maxDrawing = 100.0;
-float minDrawing = 5.0;
-float zeroDrawing = 0.0;
+int draft = 0;
+int oldDraft = 0;
+float maxDraft = 100.0;
+float minDraft = 5.0;
+float zeroDraft = 0.0;
 
 String messageTmp;
 String messageDrw;
@@ -95,7 +95,7 @@ void setup() {
   myservo.detach();
   lcd.begin(16, 2);
   //Serial.println("Consigne="+ String(consigneTemperature) +" kP="+String(kP)+" kI="+String(kI)+ " kD="+String(kD));
-  //Serial.println("Temperature;Drawing");
+  //Serial.println("Temperature;Draft");
   pinMode(buzzerPort, OUTPUT);
 }
 
@@ -114,35 +114,35 @@ void loop() {
 
     if (reset==1 || potentio < potentionRelMax ) {
       // Potentiometre regulation
-      drawing = round(potentio * maxDrawing / 100);
+      draft = round(potentio * maxDraft / 100);
       errI = 0;
       errD = 0;
       closeBuzzer = true;
       refillBuzzer = true;
-      messageDrw = "Drw=" + String(round(drawing / maxDrawing * 100)) + "%"  + " <)= "  + String(round(drawing * 90 / maxDrawing)) + "" ;
+      messageDrw = "Drw=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
     }
     else
     { 
       //  if(errI<closeTrigger && errP < 0 ){// Stop if end of combustion and temp decrease
       if (errI < closeTrigger  ) {
-        // Serial.println(String(temperature)+";"+String(drawing/maxDrawing* 100)+";"+String(errP)+";"+String(errI)+";"+String(errD));
+        // Serial.println(String(temperature)+";"+String(draft/maxDraft* 100)+";"+String(errP)+";"+String(errI)+";"+String(errD));
         // PID regulation
         errP = consigneTemperature - temperature;
         errI = errI + errP;
         errD = errP - errOld;
-        drawing = kP * errP + kI * errI + kD * errD;
+        draft = kP * errP + kI * errI + kD * errD;
         errOld = errP;
 
         // Limit values to physical constraints ..
-        if (drawing < minDrawing) drawing = minDrawing;
-        if (drawing > maxDrawing)   drawing = maxDrawing;
+        if (draft < minDraft) draft = minDraft;
+        if (draft > maxDraft)   draft = maxDraft;
 
         // Close end fire
         if (errI >= closeTrigger) errI = closeTrigger;
         if (temperature < temperatureMin) errI = 0;
-        if (errI >= closeTrigger) drawing = zeroDrawing;
+        if (errI >= closeTrigger) draft = zeroDraft;
 
-        messageDrw = "Drw=" + String(round(drawing / maxDrawing * 100)) + "%"  + " <)= "  + String(round(drawing * 90 / maxDrawing)) + "" ;
+        messageDrw = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
         //Refill Alarm
         if (errI > refillTrigger) {
           messageDrw = "Please refill !!" ;
@@ -166,7 +166,7 @@ void loop() {
 
       else {
         // Close Valve if end of combustion
-        messageDrw = "Fire End.  <)= "  + String(round(drawing * 90 / maxDrawing)) + "" ;
+        messageDrw = "Fire End.  <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
 
         if (closeBuzzer) {
           for (int i = 0; i < buzzerCloseRepeat; i++) {
@@ -188,22 +188,22 @@ void loop() {
     lcd.setCursor(0, 1);
     lcd.print(messageDrw);
     // Serial Plotter
-    // Serial.print(round(drawing/maxDrawing* 100));
+    // Serial.print(round(draft/maxDraft* 100));
     // Serial.print(" ");
     // Serial.println(temperature);
 
     // Turn servo only for 5° delta
-    if ( abs(oldDrawing - drawing) > 5  ) {
+    if ( abs(oldDraft - draft) > 5  ) {
       lcd.print(" x");
       delay(500);
       myservo.attach(10);
-      angle = angleCalibration + ( drawing * 90 / maxDrawing * servoCalibration ) ;
+      angle = angleCalibration + ( draft * 90 / maxDraft * servoCalibration ) ;
       myservo.write(angle);
       delay(500);
       myservo.detach();
 
       oldPotentio = potentio;
-      oldDrawing =  drawing;
+      oldDraft =  draft;
     }
     delay(1500);
   }
