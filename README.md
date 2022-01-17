@@ -14,9 +14,9 @@ You get a notification when a wood refill is needed.
 
 At the end of the fire, the system automatically close the air supply to prevent the stove to cool down to fast.
 
-WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.
+***WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.***
 
-Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.
+***Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.***
 
 ## The regulation
 
@@ -30,10 +30,11 @@ It is connected to :
 * a LCD screen (16x2)
 * a potentiometer to control manually the air supply.
 * a reset button 
+  
 If the air supply is set to the maximum, the Arduino switch to automatic mode and control the valve depending on the temperature measured by the thermocouple.
 
 ![circuit](documentation/circuit.png) 
-![shema](documentation/schema.png)
+![schema](documentation/schema.png)
 ![regulation](documentation/fire3.png)
 
 ## The code
@@ -51,31 +52,34 @@ IMPORTANT : You first have to configure the properties and the PID values so tha
 The thermocouple is a MAX6675 type.
 
 ![thermocouple](documentation/thermocouple2.jpg)
+
 Connect a wire from your Arduino to somewhere you can measure chimney or stove temperature.
+
 ![thermocouple](documentation/thermocouple3.jpg)
 
 Connect the thermocouple to that wire and fix the end in contact with the non isolated part of you stainless steel chimney or in contact with external part of the stove. Not inside the chimney !!
 
 As told above, I use Adafruit's library. You can install the Adafruit's library from Arduino's IDE.
+
 ![thermocouple](documentation/thermocouple5.png)
 
 ## The Valve
 
 The case of the valve and servo is 3D printed.
 
-![cylindre](../poelearduino/documentation/valve1.png)
-![cylindre](../poelearduino/documentation/valve2.png)
-![cylindre](../poelearduino/documentation/valve3.png)
-![cylindre](../poelearduino/documentation/valve4.png)
-![cylindre](../poelearduino/documentation/valve5.png)
-![cylindre](../poelearduino/documentation/valve6.jpg)
-![cylindre](../poelearduino/documentation/valve7.jpg)
+![cylindre](documentation/valve1.png)
+![cylindre](documentation/valve2.png)
+![cylindre](documentation/valve3.png)
+![cylindre](documentation/valve4.png)
+![cylindre](documentation/valve5.png)
+![cylindre](documentation/valve6.jpg)
+![cylindre](documentation/valve7.jpg)
 
 The STL files are available for download.
 
-* print the disc valve [disc](../poelearduino/3DPrint/disc.stl)
-* print the case with the cylinder [cylinder](../poelearduino/3DPrint/cylindre.stl)
-* print the servo-to-hinge connector [connector](../poelearduino/3DPrint/connector.stl)
+* print the disc valve [disc](3DPrint/disc.stl)
+* print the case with the cylinder [cylinder](3DPrint/cylindre.stl)
+* print the servo-to-hinge connector [connector](3DPrint/connector.stl)
   
 Please note that they are all printed in ABS, you might update printing size for other materials.
 
@@ -178,16 +182,21 @@ Be sure you configured and tested as explained in previous steps.
 
 To start in automatic mode, put the right potentiometer to the maximum to the right (more than 80% clockwise)
 Check the values on the LCD (angle should be 90°, and drawing 100%)
+
 ![config1](documentation/fire1.jpg)
 
 
 Start a fire, check the temperature. When the temperature goes up the desired temperature (consigneTemperature in the sketch) the valve should close. If the fire becomes too weak, the valve should open. If the fire becomes too strong, the valve should close again. I something goes wrong, use the potentiometer below 80% to be in manual mode or use the manual control of your wood stove.
+
 ![config1](documentation/fire2.jpg)
+
 You can get some nice PID curves by getting the values with Arduino serial port and plotting them. (In red the valve angle, in blue the temperature)
+
 ![config1](documentation/fire3.png)
+
 At the end of the fire, the system automatically close the air supply to prevent the stove to cool down to fast.
 
 To restart the system, press the reset button or  turn the potentiometer to zero then back to maximum value. 
 
-WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.
-Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.
+***WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.
+Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.***
