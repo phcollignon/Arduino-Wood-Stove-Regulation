@@ -2,23 +2,23 @@
 
 ## Introduction
 
-It is often tedious to control the air supply of a wood stove.
+It is a hard job to control the air supply of a wood stove.
 
-I built an automatic regulator that do it for you. It controls the air supply depending of the temperatures of the chimney.
+I built an automatic regulator that does this for you. It regulates the air supply according to the temperatures of the chimney.
 
-The combustion is always optimal and you get the maximum calories out of your firewood.
+Combustion is always optimal and you get the most calories from your firewood.
 
-You get a notification when a wood refill is needed.
+You receive a notification when a refill of wood is needed.
 
 [![Watch the video](documentation/youtube.png)](https://youtu.be/uNl3eiWf07A)
 
 
 
-At the end of the fire, the system automatically close the air supply to prevent the stove to cool down to fast.
+At the end of the fire, the system automatically closes the air supply to prevent the stove from cooling too quickly.
 
-***WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.***
+***WARNING: always leave a minimum draft. Not supplying enough air to the stove is dangerous. It can produce lethal CO or an incomplete burn gas explosion.***
 
-***Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.***
+***Disclaimer: I am not responsible for the use of this project. By using this project, you assume all responsibility for its configuration, implementation, and use.***
 
 ## The regulation
 
@@ -33,7 +33,7 @@ It is connected to :
 * a potentiometer to control manually the air supply.
 * a reset button 
   
-If the air supply is set to the maximum, the Arduino switch to automatic mode and control the valve depending on the temperature measured by the thermocouple.
+If the air supply is set to maximum, the Arduino goes into automatic mode and controls the valve based on the temperature measured by the thermocouple.
 
 ![circuit](documentation/circuit.png) 
 ![schema](documentation/schema.png)
@@ -59,7 +59,7 @@ Connect a wire from your Arduino to somewhere you can measure chimney or stove t
 
 ![thermocouple](documentation/thermocouple3.jpg)
 
-Connect the thermocouple to that wire and fix the end in contact with the non isolated part of you stainless steel chimney or in contact with external part of the stove. Not inside the chimney !!
+Connect the thermocouple and fix the end in contact with the uninsulated part of your stainless steel chimney or in contact with the external part of the stove. Not inside the fireplace!!
 
 As told above, I use Adafruit's library. You can install the Adafruit's library from Arduino's IDE.
 
@@ -183,12 +183,12 @@ Buzzer variables :
 Be sure you configured and tested as explained in previous steps.
 
 To start in automatic mode, put the right potentiometer to the maximum to the right (more than 80% clockwise)
-Check the values on the LCD (angle should be 90°, and drawing 100%)
+Check the values on the LCD (angle should be 90°, and draft 100%)
 
 ![config1](documentation/fire1.jpg)
 
 
-Start a fire, check the temperature. When the temperature goes up the desired temperature (consigneTemperature in the sketch) the valve should close. If the fire becomes too weak, the valve should open. If the fire becomes too strong, the valve should close again. I something goes wrong, use the potentiometer below 80% to be in manual mode or use the manual control of your wood stove.
+Start a fire, check the temperature. When the temperature goes up the desired temperature (consigneTemperature in the sketch) the valve should close. If the fire becomes too weak, the valve should open. If the fire becomes too strong, the valve should close again. If something goes wrong, use the potentiometer below 80% to be in manual mode or use the manual control of your wood stove.
 
 ![config1](documentation/fire2.jpg)
 
@@ -200,5 +200,5 @@ At the end of the fire, the system automatically close the air supply to prevent
 
 To restart the system, press the reset button or  turn the potentiometer to zero then back to maximum value. 
 
-***WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.
-Disclaimer : I am not responsible of any use of this project. By using this project you take all responsibilities of its configuration, implementation and usage.***
+***ATTENTION: always leave a minimum draft. Not supplying enough air to the stove is dangerous. It can produce deadly CO gas or an incomplete burn gas explosion.
+Disclaimer: I am not responsible for the use of this project. By using this project, you assume all responsibility for its configuration, implementation, and use.***
