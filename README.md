@@ -12,6 +12,10 @@ You get a notification when a wood refill is needed.
 
 [![Watch the video](https://img.youtube.com/vi/uNl3eiWf07A/maxresdefault.jpg)](https://youtu.be/uNl3eiWf07A)
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=uNl3eiWf07A
+" target="_blank"><img src="http://img.youtube.com/vi/uNl3eiWf07A/0.jpg" 
+alt="Youtube Video" width="960" height="720" border="10" /></a>
+
 At the end of the fire, the system automatically close the air supply to prevent the stove to cool down to fast.
 
 ***WARNING : always let a minium drawing. Not providing enough air supply to stove is dangerous. It can produce fatal CO gaz or incomplete burned gaz explosion.***
