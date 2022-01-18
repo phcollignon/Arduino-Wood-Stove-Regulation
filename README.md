@@ -43,7 +43,7 @@ If the air supply is set to maximum, the Arduino goes into automatic mode and co
 
 The Arduino sketch implements a PID control that stabilizes the temperature.
 
-The Arduino sketch is open source and available for download here : [stove-regulation.ino](../Arduino/stove-regulation.ino) , please read the header before using it.  
+The Arduino sketch is open source and available for download here : [stove-regulation.ino](https://github.com/phcollignon/Arduino-Wood-Stove-Regulation/blob/master/Arduino/stove-regulation.ino) , please read the header before using it.  
 
 I use Adafruit's max6675 library, it can be installed from the Arduino IDE.
 
