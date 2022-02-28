@@ -44,7 +44,7 @@ int lcdPort6 = 2;
 
 // Device objects
 Servo myservo;
-int angleCalibration = 90; // modify this value so that initial angle of the servo is 0° 
+int angleCalibration = 85; // modify this value so that initial angle of the servo is 0° 
 float servoCalibration = 1;  // modify this value so that servo is at 90° when angle is 90°
 MAX6675 thermocouple(thermoSckkPort, thermoCsPort, thermoSoPort); //,units,error);
 LiquidCrystal lcd(lcdPort1, lcdPort2, lcdPort3, lcdPort4, lcdPort5, lcdPort6);
@@ -70,10 +70,10 @@ float closeTrigger = 15000;    // closeTrigger used to close vlave at end of com
 
 int potentio = 0;
 int oldPotentio = 0;
-float potentioMax = 1023.0;    // Potentiometre calibration
+float potentioMax = 1023.0;    // Potentiometre calibration.
 int potentionRelMax = 80;      // Potentiometre value above which the regulator runs in automatic mode
 
-int reset = 0;
+int reset = LOW;
 
 int angle = 0;
 int draft = 0;
@@ -94,9 +94,8 @@ void setup() {
   myservo.write(0);
   myservo.detach();
   lcd.begin(16, 2);
-  //Serial.println("Consigne="+ String(consigneTemperature) +" kP="+String(kP)+" kI="+String(kI)+ " kD="+String(kD));
-  //Serial.println("Temperature;Draft");
   pinMode(buzzerPort, OUTPUT);
+  pinMode(resetPort, INPUT);
 }
 
 void loop() {
@@ -104,7 +103,7 @@ void loop() {
   temperature = thermocouple.readCelsius();
   potentio = analogRead(potentioPort); 
   reset = digitalRead(resetPort);
-
+  
   delay(500);
   if (temperature == -1) {
     Serial.println("Thermocouple Error!!"); // Temperature is -1 and there is a thermocouple error
@@ -112,14 +111,15 @@ void loop() {
 
     potentio =   (potentioMax - potentio) * 100 / potentioMax ;
 
-    if ( reset==1 || potentio < potentionRelMax ) {
+    if ( (reset == HIGH) || (potentio < potentionRelMax) ) {
       // Potentiometre regulation
       draft = round(potentio * maxDraft / 100);
       errI = 0;
       errD = 0;
       closeBuzzer = true;
       refillBuzzer = true;
-      messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
+      messageDrf = "Reset ... ";
+      
     }
     else
     { 
