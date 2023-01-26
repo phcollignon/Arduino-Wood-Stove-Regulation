@@ -12,20 +12,20 @@
 #include <math.h>
 
 // Thermocouple variables
-int thermoCsPort = 6;               // CS pin on MAX6675
-int thermoSoPort = 7;               // SO pin of MAX6675
-int thermoSckkPort = 8;             // SCK pin of MAX6675
-int units = 1;                      // Units to readout temp (0 = ˚F, 1 = ˚C)
-float error = 0.0;                  // Temperature compensation error
+int thermoCsPort = 6;   // CS pin on MAX6675
+int thermoSoPort = 7;   // SO pin of MAX6675
+int thermoSckkPort = 8; // SCK pin of MAX6675
+int units = 1;          // Units to readout temp (0 = ˚F, 1 = ˚C)
+float error = 0.0;      // Temperature compensation error
 
 // Buzzer variables
-int buzzerPort = 13;                 // Buzzer port
-int buzzerRefillFrequency = 2000;   // Buzzer tone frequency for refill alarm
-int buzzerRefillRepeat = 3;         // Number of refill alarm tones
-int buzzerRefillDelay = 1000;       // Delay of refill alarm tone
-int buzzerCloseFrequency = 1000;    // Buzzer tone frequency for end of fire valve close alarm
-int buzzerCloseRepeat = 2;          // Number of tones for end of fire valve close alarm
-int buzzerCloseDelay = 2000;        // Delay of tone for end of fire valve close alarm
+int buzzerPort = 13;              // Buzzer port
+int buzzerRefillFrequency = 2000; // Buzzer tone frequency for refill alarm
+int buzzerRefillRepeat = 3;       // Number of refill alarm tones
+int buzzerRefillDelay = 1000;     // Delay of refill alarm tone
+int buzzerCloseFrequency = 1000;  // Buzzer tone frequency for end of fire valve close alarm
+int buzzerCloseRepeat = 2;        // Number of tones for end of fire valve close alarm
+int buzzerCloseDelay = 2000;      // Delay of tone for end of fire valve close alarm
 
 // Reset button variables
 int resetPort = 9;
@@ -44,8 +44,8 @@ int lcdPort6 = 2;
 
 // Device objects
 Servo myservo;
-int angleCalibration = 85; // modify this value so that initial angle of the servo is 0° 
-float servoCalibration = 1;  // modify this value so that servo is at 90° when angle is 90°
+int angleCalibration = 95;                                        // modify this value so that initial angle of the servo is 0°
+float servoCalibration = 1;                                       // modify this value so that servo is at 90° when angle is 90°
 MAX6675 thermocouple(thermoSckkPort, thermoCsPort, thermoSoPort); //,units,error);
 LiquidCrystal lcd(lcdPort1, lcdPort2, lcdPort3, lcdPort4, lcdPort5, lcdPort6);
 
@@ -61,19 +61,19 @@ float errP = 0.0;
 float errD = 0.0;
 float errI = 0.0;
 float errOld = 0.0;
-float kP = 5;              // P parameter of the PID regulation
-float kI = 0.0005;         // I parameter of the PID regulation
-float kD = 0.00005;        // D parameter of the PID regulation
+float kP = 5;       // P parameter of the PID regulation
+float kI = 0.0005;  // I parameter of the PID regulation
+float kD = 0.00005; // D parameter of the PID regulation
 
-float refillTrigger = 5000;    // refillTrigger used to notify need of a wood refill
-float closeTrigger = 15000;    // closeTrigger used to close vlave at end of combustion
+float refillTrigger = 7500; // refillTrigger used to notify need of a wood refill
+float closeTrigger = 15000; // closeTrigger used to close vlave at end of combustion
 
 int potentio = 0;
 int oldPotentio = 0;
-float potentioMax = 1023.0;    // Potentiometre calibration.
-int potentionRelMax = 80;      // Potentiometre value above which the regulator runs in automatic mode
+float potentioMax = 1023.0; // Potentiometre calibration.
+int potentioRelMax = 80;    // Potentiometre value above which the regulator runs in automatic mode
 
-int reset = LOW;
+int reset = HIGH;
 
 int angle = 0;
 int draft = 0;
@@ -88,7 +88,13 @@ String messageDrf;
 boolean closeBuzzer = true;
 boolean refillBuzzer = true;
 
-void setup() {
+long debounceTime = 0;
+long debounceDelay = 50;
+int lastResetState = LOW;
+int resetState = LOW;
+
+void setup()
+{
   Serial.begin(9600);
   myservo.attach(10);
   myservo.write(0);
@@ -98,33 +104,41 @@ void setup() {
   pinMode(resetPort, INPUT);
 }
 
-void loop() {
+void loop()
+{
 
-  temperature = thermocouple.readCelsius();
-  potentio = analogRead(potentioPort); 
+  temperature = thermocouple.readCelsius() - 60; //-32)*5/9;
+  potentio = analogRead(potentioPort);
   reset = digitalRead(resetPort);
-  
+
   delay(500);
-  if (temperature == -1) {
+  if (temperature == -1)
+  {
     Serial.println("Thermocouple Error!!"); // Temperature is -1 and there is a thermocouple error
-  } else {
+  }
+  else
+  {
+   
 
-    potentio =   (potentioMax - potentio) * 100 / potentioMax ;
+    // Read potentiometer
+    potentio = (potentioMax - potentio) * 100 / potentioMax;
 
-    if ( (reset == HIGH) || (potentio < potentionRelMax) ) {
+    if ((potentio < potentioRelMax))
+    {
       // Potentiometre regulation
       draft = round(potentio * maxDraft / 100);
       errI = 0;
       errD = 0;
       closeBuzzer = true;
       refillBuzzer = true;
-      messageDrf = "Reset ... ";
-      
+
+      messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%" + " <)= " + String(round(draft * 90 / maxDraft)) + "";
     }
     else
-    { 
-        if (errI < closeTrigger  ) {
-         // PID regulation
+    {
+      if (errI < closeTrigger)
+      {
+        // PID regulation
         errP = consigneTemperature - temperature;
         errI = errI + errP;
         errD = errP - errOld;
@@ -132,20 +146,28 @@ void loop() {
         errOld = errP;
 
         // Limit values to physical constraints ..
-        if (draft < minDraft) draft = minDraft;
-        if (draft > maxDraft)   draft = maxDraft;
+        if (draft < minDraft)
+          draft = minDraft;
+        if (draft > maxDraft)
+          draft = maxDraft;
 
         // Close end fire
-        if (errI >= closeTrigger) errI = closeTrigger;
-        if (temperature < temperatureMin) errI = 0;
-        if (errI >= closeTrigger) draft = zeroDraft;
+        if (errI >= closeTrigger)
+          errI = closeTrigger;
+        if (temperature < temperatureMin)
+          errI = 0;
+        if (errI >= closeTrigger)
+          draft = zeroDraft;
 
-        messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%"  + " <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
-        //Refill Alarm
-        if (errI > refillTrigger) {
-          messageDrf = "Please refill !!" ;
-          if (refillBuzzer) {
-            for (int i = 0; i < buzzerRefillRepeat; i++) {
+        messageDrf = "Drf=" + String(round(draft / maxDraft * 100)) + "%" + " <)= " + String(round(draft * 90 / maxDraft)) + "";
+        // Refill Alarm
+        if (errI > refillTrigger)
+        {
+          messageDrf = "Please refill !!";
+          if (refillBuzzer)
+          {
+            for (int i = 0; i < buzzerRefillRepeat; i++)
+            {
               tone(buzzerPort, buzzerRefillFrequency);
               delay(buzzerRefillDelay);
               noTone(buzzerPort);
@@ -153,21 +175,24 @@ void loop() {
             }
             refillBuzzer = false;
           }
-          if (temperature > consigneTemperature) {
+          if (temperature > consigneTemperature)
+          {
             errI = 0;
             errD = 0;
             refillBuzzer = true;
           }
         }
-
       }
 
-      else {
+      else
+      {
         // Close Valve if end of combustion
-        messageDrf = "Fire End.  <)= "  + String(round(draft * 90 / maxDraft)) + "" ;
+        messageDrf = "Fire End.  <)= " + String(round(draft * 90 / maxDraft)) + "";
 
-        if (closeBuzzer) {
-          for (int i = 0; i < buzzerCloseRepeat; i++) {
+        if (closeBuzzer)
+        {
+          for (int i = 0; i < buzzerCloseRepeat; i++)
+          {
             tone(buzzerPort, buzzerCloseFrequency);
             delay(buzzerCloseDelay);
             noTone(buzzerPort);
@@ -178,11 +203,25 @@ void loop() {
       }
     }
 
+     // Handle reset button with debounce support
+   
+        if (reset == HIGH)
+        {
+          draft = 100;
+          errI = 0;
+          errD = 0;
+          closeBuzzer = true;
+          refillBuzzer = true;
+          messageDrf = "Reset ... ";
+          delay(1000);
+        }
+     
+
     // Display message on LCD
     lcd.clear();
     lcd.setCursor(0, 0);
-    messageTmp = "Tmp=" + String(temperature) + "C" + " Po=" +  round(potentio) + "%" ;
-    lcd.print(messageTmp );
+    messageTmp = "Tmp=" + String(temperature) + "C" + " Po=" + round(potentio) + "%";
+    lcd.print(messageTmp);
     lcd.setCursor(0, 1);
     lcd.print(messageDrf);
     // Serial Plotter
@@ -191,20 +230,20 @@ void loop() {
     // Serial.println(temperature);
 
     // Turn servo only for 5° delta
-    if ( abs(oldDraft - draft) > 5  ) {
+    if (abs(oldDraft - draft) > 5)
+    {
       lcd.print(" x");
       delay(500);
       myservo.attach(10);
-      angle = angleCalibration + ( draft * 90 / maxDraft * servoCalibration ) ;
+      angle = angleCalibration + (draft * 90 / maxDraft * servoCalibration);
       myservo.write(angle);
       delay(500);
       myservo.detach();
 
       oldPotentio = potentio;
-      oldDraft =  draft;
+      oldDraft = draft;
+      
     }
     delay(1500);
   }
-
-
 }
